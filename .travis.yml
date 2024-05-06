@@ -1,0 +1,25 @@
+sudo: required
+
+services :
+  - docker
+
+before_install:
+  -docker build -t ilyasse/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run ilyasse/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t ilyasse/multi-client ./client
+  - docker build -t ilyasse/multi-nginx  ./nginx
+  - docker build -t ilyasse/multi-server ./server
+  - docker build -t ilyasse/multi-worker ./worker
+
+#Log into the docker CLI
+- echo "$DOCKER_PASWWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+#Pushing these images into docker hub
+- docker push ilyasse/multi-client
+- docker push ilyasse/multi-nginx
+- docker push ilyasse/multi-server
+- docker push ilyasse/multi-worker
