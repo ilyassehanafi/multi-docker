@@ -23,3 +23,16 @@ after_success:
 - docker push ilyasse/multi-nginx
 - docker push ilyasse/multi-server
 - docker push ilyasse/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: my_region
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: myBucketName
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
